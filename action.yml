@@ -35,8 +35,7 @@ runs:
 
     - name: Check base for Updates
       id: check_base
-      needs: check_update
-      if: needs.check_update.outputs.res == '100'
+      if: ${{ steps.check_update.outputs.res == '100' }}
       shell: bash
       run: |
         res=0
