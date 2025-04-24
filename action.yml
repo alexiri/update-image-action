@@ -29,7 +29,7 @@ runs:
       shell: bash
       run: |
         res=0
-        podman run --quiet --rm ${{ inputs.imageref }} dnf check-update || res=$?
+        podman run --pull always --quiet --rm ${{ inputs.imageref }} dnf check-update || res=$?
         echo "res=${res}" >> "$GITHUB_OUTPUT"
         echo "Exit code: '$res'"
 
@@ -39,7 +39,7 @@ runs:
       shell: bash
       run: |
         res=0
-        podman run --quiet --rm ${{ inputs.baseref }} dnf check-update || res=$?
+        podman run --pull always --quiet --rm ${{ inputs.baseref }} dnf check-update || res=$?
         echo "res=${res}" >> "$GITHUB_OUTPUT"
         echo "Exit code: '$res'"
 
