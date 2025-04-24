@@ -47,14 +47,14 @@ runs:
       id: results
       shell: bash
       run: |
-        if [ "${{ needs.check_update.outputs.res }}" = "0" ]; then
+        if [ "${{ steps.check_update.outputs.res }}" = "0" ]; then
           echo "Image does not need rebuild"
           echo "rebuild-needed=false" >> "$GITHUB_OUTPUT"
-        elif [ "${{ needs.check_update.outputs.res }}" = "125" ]; then
+        elif [ "${{ steps.check_update.outputs.res }}" = "125" ]; then
           echo "Image not found, build it"
           echo "rebuild-needed=true" >> "$GITHUB_OUTPUT"
-        elif [ "${{ needs.check_update.outputs.res }}" = "100" ]; then
-          if [ "${{ needs.check_base.outputs.res }}" = "0" ]; then
+        elif [ "${{ steps.check_update.outputs.res }}" = "100" ]; then
+          if [ "${{ steps.check_base.outputs.res }}" = "0" ]; then
             echo "Updates available for ${{ inputs.imageref }} and base image is up to date"
             echo "rebuild-needed=true" >> "$GITHUB_OUTPUT"
           else
