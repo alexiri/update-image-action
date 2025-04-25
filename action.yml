@@ -7,7 +7,7 @@ inputs:
     required: true
   baseref:
     description: 'Base image to check for updates'
-    required: true
+    required: false
 
 outputs:
   rebuild-needed:
@@ -33,13 +33,29 @@ runs:
         echo "res=${res}" >> "$GITHUB_OUTPUT"
         echo "Exit code: '$res'"
 
+        BASE_IMAGE=$(podman image inspect --format '{{index .Annotations "org.opencontainers.image.base.name"}}' ${{ inputs.imageref }})
+        echo "base_image=${BASE_IMAGE}" >> "$GITHUB_OUTPUT"
+
     - name: Check base for Updates
       id: check_base
       if: ${{ steps.check_update.outputs.res == '100' }}
       shell: bash
       run: |
+        # Use baseref if provided, otherwise use the base image from the image. if we don't have that either, return 0
+        if [ -z "${{ inputs.baseref }}" ]; then
+          if [ -z "${{ steps.check_update.outputs.base_image }}" ]; then
+            echo "No base image provided, skipping check"
+            echo "res=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "Using base image from the image: ${{ steps.check_update.outputs.base_image }}"
+            export BASE_IMAGE=${{ steps.check_update.outputs.base_image }}
+          fi
+        else
+          export BASE_IMAGE=${{ inputs.baseref }}
+        fi
         res=0
-        podman run --pull always --quiet --rm ${{ inputs.baseref }} dnf check-update || res=$?
+        podman run --pull always --quiet --rm ${BASE_IMAGE} dnf check-update || res=$?
         echo "res=${res}" >> "$GITHUB_OUTPUT"
         echo "Exit code: '$res'"
 

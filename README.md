@@ -14,7 +14,7 @@ This action is designed to be called from a GitHub workflow using the following 
         uses: alexiri/update-image-action@main
         with:
           imageref: ghcr.io/${{ github.repository_owner }}/${{ matrix.variant == 'gnome' && 'blueshift_v3' || 'blueshift_v3-plasma' }}
-          baseref: quay.io/almalinuxorg/almalinux-bootc:10-kitten
+          baseref: quay.io/almalinuxorg/almalinux-bootc:10-kitten  # Not needed if you define the Annotation "org.opencontainers.image.base.name"
 
       - name: Build Custom Image
         if: ${{ steps.check_update.outputs.rebuild-needed == 'true' }}
@@ -43,7 +43,6 @@ on:
         uses: alexiri/update-image-action@main
         with:
           imageref: ghcr.io/${{ github.repository_owner }}/${{ matrix.variant == 'gnome' && 'blueshift_v3' || 'blueshift_v3-plasma' }}
-          baseref: quay.io/almalinuxorg/almalinux-bootc:10-kitten
 
       - name: Build Custom Image
         if: ${{ steps.check_update.outputs.rebuild-needed == 'true' || inputs.FORCE_REBUILD }}
